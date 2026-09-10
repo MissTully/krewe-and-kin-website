@@ -1,9 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Allow /demo/ without Next's default strip-to-/demo (which fought our add-slash redirect).
+  skipTrailingSlashRedirect: true,
   async redirects() {
     return [
-      // Force trailing slash so relative demo assets resolve under /demo/
+      // Canonicalize bare /demo to /demo/ so relative assets resolve under /demo/
       { source: "/demo", destination: "/demo/", permanent: true },
     ];
   },
@@ -14,7 +16,6 @@ const nextConfig: NextConfig = {
         { source: "/welcome", destination: "/site/welcome.html" },
         { source: "/welcome.html", destination: "/site/welcome.html" },
         { source: "/index.html", destination: "/site/index.html" },
-        // Serve static demo index when URL has trailing slash
         { source: "/demo/", destination: "/demo/index.html" },
       ],
     };
