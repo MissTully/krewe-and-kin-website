@@ -7,26 +7,40 @@ export function Nav({ user }: { user: SessionUser | null }) {
     <header className="border-b border-[#C9A227]/40 bg-[#0a0a0a] text-[#F5F0E6]">
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4">
         <Link href={user ? "/clients/dashboard" : "/"} className="group">
-          <div className="text-lg font-semibold tracking-wide">
+          <div className="font-display text-lg tracking-wide">
             Krewe <span className="text-[#C9A227]">&amp;</span> Kin
           </div>
-          <div className="text-xs text-[#F5F0E6]/70">Client billing</div>
+          <div className="font-util text-xs font-semibold uppercase tracking-[0.16em] text-[#F5F0E6]/70">
+            Client billing
+          </div>
         </Link>
         <nav className="flex flex-wrap items-center gap-3 text-sm">
           {user ? (
             <>
-              <Link className="hover:text-[#C9A227]" href="/clients/dashboard">
+              <Link
+                className="font-util font-semibold uppercase tracking-[0.12em] hover:text-[#C9A227]"
+                href="/clients/dashboard"
+              >
                 Dashboard
               </Link>
               {isAdmin ? (
                 <>
-                  <Link className="hover:text-[#C9A227]" href="/clients/admin">
+                  <Link
+                    className="font-util font-semibold uppercase tracking-[0.12em] hover:text-[#C9A227]"
+                    href="/clients/admin"
+                  >
                     Admin
                   </Link>
-                  <Link className="hover:text-[#C9A227]" href="/clients/admin/clients">
+                  <Link
+                    className="font-util font-semibold uppercase tracking-[0.12em] hover:text-[#C9A227]"
+                    href="/clients/admin/clients"
+                  >
                     Clients
                   </Link>
-                  <Link className="hover:text-[#C9A227]" href="/clients/admin/invoices/new">
+                  <Link
+                    className="font-util font-semibold uppercase tracking-[0.12em] hover:text-[#C9A227]"
+                    href="/clients/admin/invoices/new"
+                  >
                     New invoice
                   </Link>
                 </>
@@ -39,7 +53,7 @@ export function Nav({ user }: { user: SessionUser | null }) {
               <form action="/api/auth/logout" method="post">
                 <button
                   type="submit"
-                  className="rounded border border-[#C9A227]/50 px-2 py-1 text-xs hover:bg-[#C9A227]/10"
+                  className="rounded border border-[#C9A227]/50 px-2 py-1 text-xs uppercase tracking-[0.12em] hover:bg-[#C9A227]/10"
                 >
                   Sign out
                 </button>
@@ -48,7 +62,7 @@ export function Nav({ user }: { user: SessionUser | null }) {
           ) : (
             <Link
               href="/clients/login"
-              className="rounded bg-[#C9A227] px-3 py-1.5 font-medium text-[#0a0a0a] hover:bg-[#e0b93a]"
+              className="rounded bg-[#C9A227] px-3 py-1.5 font-util text-sm font-semibold uppercase tracking-[0.12em] text-[#0a0a0a] hover:bg-[#e0b93a]"
             >
               Sign in
             </Link>
