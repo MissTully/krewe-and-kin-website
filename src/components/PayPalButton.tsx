@@ -25,7 +25,7 @@ export function PayPalButton({
       });
       const createData = await createRes.json();
       if (!createRes.ok) {
-        throw new Error(createData.error || "Could not create PayPal order");
+        throw new Error(createData.error || "PayPal couldn't start checkout. Please try again.");
       }
 
       if (createData.demo) {
@@ -39,9 +39,9 @@ export function PayPalButton({
         });
         const captureData = await captureRes.json();
         if (!captureRes.ok) {
-          throw new Error(captureData.error || "Capture failed");
+          throw new Error(captureData.error || "PayPal couldn't complete this payment.");
         }
-        setMessage("Demo payment captured. Invoice marked paid.");
+        setMessage("Payment received. This invoice is marked paid.");
         window.location.reload();
         return;
       }
@@ -51,7 +51,7 @@ export function PayPalButton({
         return;
       }
 
-      throw new Error("No PayPal approval URL returned");
+      throw new Error("PayPal didn't open checkout. Please try again.");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Payment failed");
     } finally {
@@ -72,7 +72,7 @@ export function PayPalButton({
       {error ? <p className="text-sm text-rose-700">{error}</p> : null}
       {message ? <p className="text-sm text-emerald-700">{message}</p> : null}
       <p className="text-xs text-stone-500">
-        Uses PayPal Orders API (sandbox when PAYPAL_* env is set; demo capture otherwise).
+        You&apos;ll finish checkout securely on PayPal.
       </p>
     </div>
   );

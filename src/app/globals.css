@@ -6,17 +6,46 @@
   --cream: #f5f0e6;
   --gold: #c9a227;
   --ink: #0a0a0a;
+  /* Match public/site/index.html */
+  --display: var(--font-fraunces), "Hoefler Text", Georgia, serif;
+  --body: var(--font-bitter), "Source Serif 4", Georgia, serif;
+  --util: var(--font-barlow), "Oswald", "Arial Narrow", sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--body);
+  --font-display: var(--display);
+  --font-util: var(--util);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--body);
+  font-weight: 500;
+  letter-spacing: 0.004em;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--display);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.015em;
+  font-variation-settings: "SOFT" 0, "WONK" 1, "opsz" 96;
+}
+
+/* Eyebrows, table headers, stat labels, and other small caps */
+.uppercase {
+  font-family: var(--util);
+}
+
+button {
+  font-family: var(--util);
+  font-weight: 600;
+  letter-spacing: 0.08em;
 }

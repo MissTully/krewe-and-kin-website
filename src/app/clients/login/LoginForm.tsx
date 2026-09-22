@@ -21,7 +21,7 @@ export function LoginForm({ demoMode }: { demoMode: boolean }) {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to send link");
-      setInfo(data.message || "Check your email for a magic link.");
+      setInfo(data.message || "Check your email for a sign-in link.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -62,7 +62,7 @@ export function LoginForm({ demoMode }: { demoMode: boolean }) {
           disabled={loading}
           className="w-full rounded-md bg-[#0a0a0a] px-4 py-2.5 text-sm font-medium text-[#F5F0E6] hover:bg-stone-800 disabled:opacity-50"
         >
-          {loading ? "Sending…" : "Email me a magic link"}
+          {loading ? "Sending…" : "Email me a sign-in link"}
         </button>
       </form>
       {info ? <p className="text-sm text-emerald-700">{info}</p> : null}
@@ -70,8 +70,8 @@ export function LoginForm({ demoMode }: { demoMode: boolean }) {
 
       {demoMode ? (
         <div className="border-t border-stone-100 pt-4">
-          <p className="mb-3 text-xs uppercase tracking-wide text-stone-500">
-            Demo mode (no Supabase required)
+          <p className="mb-3 text-xs uppercase tracking-[0.14em] text-stone-500">
+            Preview the portal
           </p>
           <div className="flex gap-2">
             <button

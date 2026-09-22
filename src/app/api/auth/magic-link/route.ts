@@ -11,7 +11,7 @@ export async function POST(request: Request) {
   if (isDemoMode()) {
     return NextResponse.json({
       message:
-        "DEMO_MODE is on — use the demo buttons below, or configure Supabase and set DEMO_MODE=false.",
+        "This preview doesn't email a link. Use the preview buttons below, or write missy@kreweandkin.com.",
     });
   }
 
@@ -29,15 +29,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
     return NextResponse.json({
-      message: "Magic link sent. Check your inbox.",
+      message: "Check your email for a sign-in link.",
     });
   } catch (e) {
+    console.error(e);
     return NextResponse.json(
       {
         error:
-          e instanceof Error
-            ? e.message
-            : "Supabase is not configured. Set env vars or use DEMO_MODE=true.",
+          "Sign-in isn't available right now. Email missy@kreweandkin.com and I'll help you in.",
       },
       { status: 500 }
     );

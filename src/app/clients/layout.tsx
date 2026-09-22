@@ -11,7 +11,7 @@ export default async function ClientsLayout({
     <>
       <Nav user={user} />
       <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">{children}</div>
-      <footer className="border-t border-stone-200 bg-[#F5F0E6] py-6 text-center text-sm text-stone-600">
+      <footer className="border-t border-stone-200 bg-[#F5F0E6] py-6 text-center font-util text-sm uppercase tracking-[0.14em] text-stone-600">
         Krewe &amp; Kin · missy@kreweandkin.com ·{" "}
         <a className="underline hover:text-[#C9A227]" href="/">
           kreweandkin.com
