@@ -22,6 +22,12 @@ export type DirectoryListing = {
    */
   image?: string;
   imageAlt?: string;
+  /** Marketing flyer preview shown beside the listing when set. */
+  flyerImage?: string;
+  flyerAlt?: string;
+  /** Opens the flyer file (PDF download or the full image). */
+  flyerHref?: string;
+  flyerLabel?: string;
 };
 
 const LOCAL_MEDIA_PREFIX = "/api/directory/media/";
@@ -62,6 +68,10 @@ export const DIRECTORY_CATEGORIES: DirectoryCategory[] = [
         badge: "Founding listing",
         image: "/directory/krewe-and-kin.jpg",
         imageAlt: "Krewe & Kin logo",
+        flyerImage: "/directory/krewe-kin-studio-flyer.jpg",
+        flyerAlt: "Krewe & Kin marketing flyer: Your krewe. One website.",
+        flyerHref: "/directory/krewe-kin-studio-flyer.jpg",
+        flyerLabel: "Open flyer",
         meta: [
           {
             label: "Krewe of Shamrock",

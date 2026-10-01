@@ -5,7 +5,7 @@ import "../directory.css";
 
 const title = "Request a listing — Krewe Business Directory";
 const description =
-  "Krewe members can request a Tampa Bay business listing and upload a logo or photo. Missy approves it before it goes on the directory.";
+  "Krewe members can request a Tampa Bay business listing, upload a logo for the card, and optionally add a marketing flyer. Missy approves it before it goes on the directory.";
 
 export const metadata: Metadata = {
   title: { absolute: title },
@@ -33,8 +33,9 @@ export default function RequestListingPage() {
           <h1>Request a listing</h1>
           <p className="kk-lede">
             Tell us the business, your krewe, what you offer, and how boards
-            should reach you. Upload a logo or photo — it shows on the card
-            after the listing is approved.
+            should reach you. The logo or photo is the directory card. A
+            marketing flyer is optional and opens from the listing after it’s
+            approved.
           </p>
         </header>
         <RequestListingForm />

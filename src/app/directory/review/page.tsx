@@ -52,7 +52,13 @@ export default async function DirectoryReviewPage() {
             The listing store didn’t load. Check the Blob token and try again.
           </p>
         ) : (
-          <DirectoryReviewList submissions={submissions} />
+          <DirectoryReviewList
+            submissions={submissions.map((submission) => {
+              const visible = { ...submission };
+              delete visible.flyerToken;
+              return visible;
+            })}
+          />
         )}
       </main>
     </div>

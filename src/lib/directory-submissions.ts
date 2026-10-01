@@ -8,8 +8,11 @@ import {
   isDirectoryCategoryId,
 } from "@/lib/directory";
 import {
+  MAX_FLYER_BYTES,
   MAX_LISTING_IMAGE_BYTES,
+  sniffFlyer,
   sniffListingImage,
+  type FlyerKind,
   type ListingImageKind,
 } from "@/lib/directory-image";
 
@@ -30,6 +33,11 @@ export type DirectorySubmission = {
   imageExt: ListingImageKind["ext"];
   /** Public card URL. Blob https URL, or the local media route in dev. */
   imageUrl: string;
+  /** Set only until the optional flyer upload finishes. Not shown publicly. */
+  flyerToken?: string;
+  flyerUrl?: string;
+  flyerContentType?: FlyerKind["contentType"];
+  flyerExt?: FlyerKind["ext"];
 };
 
 export type SubmissionInput = {
@@ -113,6 +121,7 @@ export async function createSubmission(input: SubmissionInput): Promise<Director
     imageContentType: input.kind.contentType,
     imageExt: input.kind.ext,
     imageUrl: `/api/directory/media/${id}`,
+    flyerToken: randomUUID(),
   };
 
   if (blobEnabled()) {
@@ -193,6 +202,73 @@ export async function getSubmission(id: string): Promise<DirectorySubmission | n
   return rows.find((row) => row.id === id) ?? null;
 }
 
+export async function attachFlyer(
+  id: string,
+  token: string,
+  bytes: Uint8Array,
+  kind: FlyerKind,
+): Promise<DirectorySubmission | null> {
+  assertId(id);
+  const current = await getSubmission(id);
+  if (!current || current.status !== "pending") return null;
+  if (!current.flyerToken || current.flyerToken !== token) return null;
+
+  const next: DirectorySubmission = {
+    ...current,
+    flyerContentType: kind.contentType,
+    flyerExt: kind.ext,
+    flyerUrl: `/api/directory/media/${id}/flyer`,
+  };
+  delete next.flyerToken;
+
+  if (blobEnabled()) {
+    const stored = await putBlob(
+      `${PREFIX}/${id}.flyer.${kind.ext}`,
+      Buffer.from(bytes),
+      kind.contentType,
+      60 * 60 * 24 * 30,
+    );
+    next.flyerUrl = stored.url;
+    await putBlob(`${PREFIX}/${id}.json`, JSON.stringify(next), "application/json", 60);
+    return next;
+  }
+
+  const dir = localDir();
+  await mkdir(dir, { recursive: true });
+  await writeFile(path.join(dir, `${id}.flyer.${kind.ext}`), bytes);
+  await writeLocal(next, null);
+  return next;
+}
+
+export async function deleteSubmission(id: string): Promise<void> {
+  assertId(id);
+  const current = await getSubmission(id);
+  if (!current) return;
+
+  if (blobEnabled()) {
+    const { del } = await import("@vercel/blob");
+    const pathnames = [
+      `${PREFIX}/${id}.json`,
+      `${PREFIX}/${id}.${current.imageExt}`,
+    ];
+    if (current.flyerExt) pathnames.push(`${PREFIX}/${id}.flyer.${current.flyerExt}`);
+    await del(pathnames);
+    return;
+  }
+
+  const { unlink } = await import("fs/promises");
+  const dir = localDir();
+  await Promise.all(
+    [
+      path.join(dir, `${id}.json`),
+      path.join(dir, `${id}.${current.imageExt}`),
+      current.flyerExt ? path.join(dir, `${id}.flyer.${current.flyerExt}`) : null,
+    ]
+      .filter((file): file is string => Boolean(file))
+      .map((file) => unlink(file).catch(() => undefined)),
+  );
+}
+
 export async function setSubmissionStatus(
   id: string,
   status: SubmissionStatus,
@@ -201,12 +277,26 @@ export async function setSubmissionStatus(
   const current = await getSubmission(id);
   if (!current) return null;
   const next = { ...current, status };
+  if (status !== "pending") delete next.flyerToken;
   if (blobEnabled()) {
     await putBlob(`${PREFIX}/${id}.json`, JSON.stringify(next), "application/json", 60);
     return next;
   }
   await writeLocal(next, null);
   return next;
+}
+
+export async function readLocalFlyer(id: string): Promise<Uint8Array | null> {
+  assertId(id);
+  const submission = await getSubmission(id);
+  if (!submission?.flyerExt || submission.flyerUrl?.startsWith("https://")) return null;
+  try {
+    const bytes = await readFile(path.join(localDir(), `${id}.flyer.${submission.flyerExt}`));
+    return new Uint8Array(bytes);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return null;
+    throw error;
+  }
 }
 
 export async function readLocalSubmissionImage(id: string): Promise<Uint8Array | null> {
@@ -223,6 +313,8 @@ export async function readLocalSubmissionImage(id: string): Promise<Uint8Array |
 }
 
 export function submissionToListing(submission: DirectorySubmission): DirectoryListing {
+  const imageFlyer =
+    Boolean(submission.flyerUrl) && submission.flyerContentType !== "application/pdf";
   return {
     id: `${submission.categoryId}:${submission.id}`,
     name: submission.name,
@@ -231,6 +323,10 @@ export function submissionToListing(submission: DirectorySubmission): DirectoryL
     badge: "Listed",
     image: submission.imageUrl,
     imageAlt: submission.imageAlt,
+    flyerImage: imageFlyer ? submission.flyerUrl : undefined,
+    flyerAlt: imageFlyer ? `${submission.name} marketing flyer` : undefined,
+    flyerHref: imageFlyer ? submission.flyerUrl : undefined,
+    flyerLabel: imageFlyer ? "Open flyer" : undefined,
     meta: submissionMeta(submission),
   };
 }
@@ -240,6 +336,9 @@ function submissionMeta(submission: DirectorySubmission): ListingMeta[] {
   const website = websiteMeta(submission.website);
   if (website) meta.push(website);
   meta.push(contactMeta(submission.contact));
+  if (submission.flyerUrl && submission.flyerContentType === "application/pdf") {
+    meta.push({ label: "View flyer", href: submission.flyerUrl, external: true });
+  }
   return meta;
 }
 
@@ -277,6 +376,7 @@ export type SubmissionField =
   | "contact"
   | "website"
   | "image"
+  | "flyer"
   | "form";
 
 export type SubmissionErrors = Partial<Record<SubmissionField, string>>;
@@ -326,6 +426,23 @@ export function validateSubmissionImage(bytes: Uint8Array): {
   const kind = sniffListingImage(bytes);
   if (!kind) {
     return { kind: null, error: "Use a JPG, PNG, or WebP image." };
+  }
+  return { kind };
+}
+
+export function validateFlyer(bytes: Uint8Array): {
+  kind: FlyerKind | null;
+  error?: string;
+} {
+  if (bytes.byteLength === 0) {
+    return { kind: null, error: "Add a flyer file, or leave that field empty." };
+  }
+  if (bytes.byteLength > MAX_FLYER_BYTES) {
+    return { kind: null, error: "That flyer is over 4 MB. Try a smaller file." };
+  }
+  const kind = sniffFlyer(bytes);
+  if (!kind) {
+    return { kind: null, error: "Use a JPG, PNG, WebP, or PDF for the flyer." };
   }
   return { kind };
 }

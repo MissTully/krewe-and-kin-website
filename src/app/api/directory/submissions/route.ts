@@ -51,10 +51,14 @@ export async function POST(request: Request) {
       errors.image = image.error;
     } else if (Object.keys(errors).length === 0) {
       try {
-        await createSubmission({ ...input, bytes, kind: image.kind });
+        const submission = await createSubmission({ ...input, bytes, kind: image.kind });
         revalidatePath("/directory");
         revalidatePath("/directory/review");
-        return NextResponse.json({ ok: true });
+        return NextResponse.json({
+          ok: true,
+          id: submission.id,
+          flyerToken: submission.flyerToken,
+        });
       } catch (error) {
         console.error("directory submission failed", error);
         return NextResponse.json(

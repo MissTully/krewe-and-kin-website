@@ -265,12 +265,70 @@
   color: var(--kk-muted);
 }
 
+.kk-card__main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
 .kk-card__body {
   padding: 16px 18px 16px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   flex: 1;
+}
+
+.kk-card__media--logo {
+  aspect-ratio: 2.4 / 1;
+  background: #070d0e;
+}
+
+.kk-card__media--logo .kk-card__photo {
+  object-fit: contain;
+}
+
+.kk-card--with-flyer {
+  grid-column: 1 / -1;
+}
+
+.kk-card__flyer {
+  margin: 0;
+  background: #f7f3ea;
+  border-top: 1px solid #d4c9b0;
+}
+
+.kk-card__flyer a {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  padding: 14px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.kk-card__flyer-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: #fffdf8;
+  border: 1px solid rgba(23, 17, 13, 0.12);
+  overflow: hidden;
+}
+
+.kk-card__flyer-img {
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
+
+.kk-card__flyer-link {
+  font-family: var(--util);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.82rem;
+  color: var(--kk-gold-deep);
 }
 
 .kk-card--founding {
@@ -613,6 +671,31 @@ button.kk-btn:disabled {
   margin-top: 14px;
 }
 
+.kk-review__files {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.kk-review__files figure {
+  margin: 0;
+}
+
+.kk-review__files figcaption {
+  margin: 0 0 6px;
+  font-family: var(--util);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+}
+
+.kk-review__files a {
+  display: inline-block;
+  margin-top: 6px;
+  color: var(--kk-gold-deep);
+}
+
 @media (max-width: 640px) {
   .kk-review__item {
     grid-template-columns: 1fr;
@@ -645,6 +728,19 @@ button.kk-btn:disabled {
 .kk-foot a:hover {
   color: var(--kk-gold-deep);
   border-bottom-color: var(--kk-gold);
+}
+
+@media (min-width: 860px) {
+  .kk-card--with-flyer {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(320px, 52%);
+    align-items: center;
+  }
+
+  .kk-card__flyer {
+    border-top: 0;
+    border-left: 1px solid #d4c9b0;
+  }
 }
 
 @media (min-width: 760px) {

@@ -63,10 +63,37 @@ export function DirectoryReviewList({ submissions }: { submissions: DirectorySub
                 const busy = pendingId === submission.id;
                 return (
                   <li key={submission.id} className="kk-review__item">
-                    <div className="kk-form__preview">
-                      {/* Admin-only preview. Pending images 404 for everyone else. */}
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={submission.imageUrl} alt={submission.imageAlt} />
+                    <div className="kk-review__files">
+                      <figure>
+                        <figcaption>Card image</figcaption>
+                        <div className="kk-form__preview">
+                          {/* Admin-only preview. Pending images 404 for everyone else. */}
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={submission.imageUrl} alt={submission.imageAlt} />
+                        </div>
+                      </figure>
+                      <figure>
+                        <figcaption>Marketing flyer</figcaption>
+                        {submission.flyerUrl ? (
+                          submission.flyerContentType === "application/pdf" ? (
+                            <a href={submission.flyerUrl} target="_blank" rel="noopener noreferrer">
+                              Open PDF flyer
+                            </a>
+                          ) : (
+                            <>
+                              <div className="kk-form__preview">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={submission.flyerUrl} alt="" />
+                              </div>
+                              <a href={submission.flyerUrl} target="_blank" rel="noopener noreferrer">
+                                Open flyer
+                              </a>
+                            </>
+                          )
+                        ) : (
+                          <p>No flyer uploaded</p>
+                        )}
+                      </figure>
                     </div>
                     <div>
                       <h3>{submission.name}</h3>
