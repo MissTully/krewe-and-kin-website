@@ -5,7 +5,7 @@ import { DIRECTORY_CATEGORIES } from "@/lib/directory";
 import { MAX_FLYER_BYTES, MAX_LISTING_IMAGE_BYTES } from "@/lib/directory-image";
 
 type Errors = Partial<
-  Record<"name" | "krewe" | "category" | "offer" | "contact" | "website" | "image" | "flyer" | "form", string>
+  Record<"name" | "krewe" | "category" | "offer" | "email" | "phone" | "website" | "image" | "flyer" | "form", string>
 >;
 
 export function RequestListingForm() {
@@ -189,15 +189,29 @@ export function RequestListingForm() {
       </label>
 
       <label className="kk-field">
-        <span>Contact</span>
+        <span>Email</span>
         <input
-          name="contact"
+          name="email"
+          type="email"
           required
           maxLength={120}
           autoComplete="email"
-          placeholder="Email or phone"
+          inputMode="email"
         />
-        {errors.contact ? <small role="alert">{errors.contact}</small> : null}
+        {errors.email ? <small role="alert">{errors.email}</small> : null}
+      </label>
+
+      <label className="kk-field">
+        <span>Phone</span>
+        <input
+          name="phone"
+          type="tel"
+          required
+          maxLength={40}
+          autoComplete="tel"
+          inputMode="tel"
+        />
+        {errors.phone ? <small role="alert">{errors.phone}</small> : null}
       </label>
 
       <label className="kk-field">
@@ -207,16 +221,24 @@ export function RequestListingForm() {
       </label>
 
       <div className="kk-field">
-        <label htmlFor="listing-image">Logo or photo</label>
-        <input
-          id="listing-image"
-          name="image"
-          type="file"
-          accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
-          required
-          onChange={(event) => onFile(event.target.files?.[0] ?? null)}
-        />
-        <p className="kk-field__hint">
+        <span id="listing-image-label">Logo or photo</span>
+        <div className="kk-upload">
+          <input
+            id="listing-image"
+            className="kk-upload__input"
+            name="image"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
+            required
+            aria-labelledby="listing-image-label"
+            aria-describedby="listing-image-hint"
+            onChange={(event) => onFile(event.target.files?.[0] ?? null)}
+          />
+          <label htmlFor="listing-image" className="kk-btn">
+            {fileName ? "Change logo" : "Choose logo"}
+          </label>
+        </div>
+        <p id="listing-image-hint" className="kk-field__hint">
           This is the directory card image. JPG, PNG, or WebP. Up to 4 MB.
         </p>
         {fileName ? <p className="kk-field__file">{fileName}</p> : null}
@@ -231,17 +253,25 @@ export function RequestListingForm() {
       </div>
 
       <div className="kk-field">
-        <label htmlFor="listing-flyer">
+        <span id="listing-flyer-label">
           Marketing flyer <em>optional</em>
-        </label>
-        <input
-          id="listing-flyer"
-          name="flyer"
-          type="file"
-          accept="image/jpeg,image/png,image/webp,application/pdf,.jpg,.jpeg,.png,.webp,.pdf"
-          onChange={(event) => onFlyer(event.target.files?.[0] ?? null)}
-        />
-        <p className="kk-field__hint">
+        </span>
+        <div className="kk-upload">
+          <input
+            id="listing-flyer"
+            className="kk-upload__input"
+            name="flyer"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,application/pdf,.jpg,.jpeg,.png,.webp,.pdf"
+            aria-labelledby="listing-flyer-label"
+            aria-describedby="listing-flyer-hint"
+            onChange={(event) => onFlyer(event.target.files?.[0] ?? null)}
+          />
+          <label htmlFor="listing-flyer" className="kk-btn">
+            {flyerName ? "Change flyer" : "Choose flyer"}
+          </label>
+        </div>
+        <p id="listing-flyer-hint" className="kk-field__hint">
           A promotional flyer people can open from your listing. This is not the
           card image. JPG, PNG, WebP, or PDF. Up to 4 MB.
         </p>

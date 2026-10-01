@@ -101,7 +101,24 @@ export function DirectoryReviewList({ submissions }: { submissions: DirectorySub
                         {submission.krewe} · {category?.label ?? submission.categoryId}
                       </p>
                       <p>{submission.offer}</p>
-                      <p>{submission.contact}</p>
+                      {submission.email || submission.phone ? (
+                        <>
+                          {submission.email ? (
+                            <p>
+                              <a href={`mailto:${submission.email}`}>{submission.email}</a>
+                            </p>
+                          ) : null}
+                          {submission.phone ? (
+                            <p>
+                              <a href={`tel:${submission.phone.replace(/[^\d+]/g, "")}`}>
+                                {submission.phone}
+                              </a>
+                            </p>
+                          ) : null}
+                        </>
+                      ) : (
+                        <p>{submission.contact}</p>
+                      )}
                       {submission.website ? <p>{submission.website}</p> : null}
                       <div className="kk-review__actions">
                         {submission.status !== "approved" ? (

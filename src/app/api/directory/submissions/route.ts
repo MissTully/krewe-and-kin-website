@@ -35,7 +35,8 @@ export async function POST(request: Request) {
     krewe: field(formData, "krewe"),
     categoryId: field(formData, "category"),
     offer: field(formData, "offer"),
-    contact: field(formData, "contact"),
+    email: field(formData, "email"),
+    phone: field(formData, "phone"),
     website: field(formData, "website"),
   };
   const errors = validateSubmissionFields(input);

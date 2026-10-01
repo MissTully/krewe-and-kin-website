@@ -32,10 +32,10 @@ export default function RequestListingPage() {
           <p className="kk-eyebrow">Krewe Business Directory</p>
           <h1>Request a listing</h1>
           <p className="kk-lede">
-            Tell us the business, your krewe, what you offer, and how boards
-            should reach you. The logo or photo is the directory card. A
-            marketing flyer is optional and opens from the listing after it’s
-            approved.
+            Tell us the business, your krewe, what you offer, and an email
+            and phone so boards can reach you. The logo or photo is the
+            directory card. A marketing flyer is optional and opens from the
+            listing after it’s approved.
           </p>
         </header>
         <RequestListingForm />

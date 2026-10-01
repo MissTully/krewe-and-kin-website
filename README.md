@@ -63,7 +63,7 @@ update public.profiles set role = 'admin' where email = 'missy@kreweandkin.com';
 
 ## Directory listing uploads
 
-Business owners request a listing at `/directory/request` and upload a card logo (JPG, PNG, or WebP, 4 MB max) plus an optional marketing flyer (JPG, PNG, WebP, or PDF, 4 MB max). Files are checked by their contents, not just the filename.
+Business owners request a listing at `/directory/request` with a required email and phone. They upload a card logo (JPG, PNG, or WebP, 4 MB max) plus an optional marketing flyer (JPG, PNG, WebP, or PDF, 4 MB max) using the form’s upload buttons. Files are checked by their contents, not just the filename. Older pending requests that only stored one contact string still show that contact.
 
 - On Vercel, uploads go to the `krewe-directory` Blob store (`BLOB_READ_WRITE_TOKEN` is set when that store is connected).
 - Locally, with the token unset, uploads are saved under `.data/directory-submissions/` (gitignored).

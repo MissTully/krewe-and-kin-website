@@ -24,7 +24,10 @@ export type DirectorySubmission = {
   krewe: string;
   categoryId: string;
   offer: string;
+  /** Older requests stored one contact string. New requests also set email and phone. */
   contact: string;
+  email?: string;
+  phone?: string;
   website: string;
   status: SubmissionStatus;
   createdAt: string;
@@ -45,7 +48,8 @@ export type SubmissionInput = {
   krewe: string;
   categoryId: string;
   offer: string;
-  contact: string;
+  email: string;
+  phone: string;
   website: string;
   bytes: Uint8Array;
   kind: ListingImageKind;
@@ -113,7 +117,9 @@ export async function createSubmission(input: SubmissionInput): Promise<Director
     krewe: input.krewe,
     categoryId: input.categoryId,
     offer: input.offer,
-    contact: input.contact,
+    contact: `${input.email} · ${input.phone}`,
+    email: input.email,
+    phone: input.phone,
     website: input.website,
     status: "pending",
     createdAt: new Date().toISOString(),
@@ -335,7 +341,11 @@ function submissionMeta(submission: DirectorySubmission): ListingMeta[] {
   const meta: ListingMeta[] = [{ label: submission.krewe }];
   const website = websiteMeta(submission.website);
   if (website) meta.push(website);
-  meta.push(contactMeta(submission.contact));
+  if (submission.email) meta.push({ label: submission.email, href: `mailto:${submission.email}` });
+  if (submission.phone) meta.push(phoneMeta(submission.phone));
+  if (!submission.email && !submission.phone && submission.contact) {
+    meta.push(contactMeta(submission.contact));
+  }
   if (submission.flyerUrl && submission.flyerContentType === "application/pdf") {
     meta.push({ label: "View flyer", href: submission.flyerUrl, external: true });
   }
@@ -343,14 +353,26 @@ function submissionMeta(submission: DirectorySubmission): ListingMeta[] {
 }
 
 function contactMeta(contact: string): ListingMeta {
-  if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact)) {
+  if (isEmail(contact)) {
     return { label: contact, href: `mailto:${contact}` };
   }
-  const digits = contact.replace(/[^\d+]/g, "");
-  if (digits.replace(/\D/g, "").length >= 10) {
-    return { label: contact, href: `tel:${digits}` };
-  }
+  if (isPhone(contact)) return phoneMeta(contact);
   return { label: contact };
+}
+
+function phoneMeta(phone: string): ListingMeta {
+  const tel = phone.replace(/[^\d+]/g, "");
+  return { label: phone, href: `tel:${tel}` };
+}
+
+function isEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function isPhone(value: string) {
+  if (/[a-z]/i.test(value)) return false;
+  const digits = value.replace(/\D/g, "");
+  return digits.length >= 10 && digits.length <= 15;
 }
 
 function websiteMeta(website: string): ListingMeta | null {
@@ -373,7 +395,8 @@ export type SubmissionField =
   | "krewe"
   | "category"
   | "offer"
-  | "contact"
+  | "email"
+  | "phone"
   | "website"
   | "image"
   | "flyer"
@@ -386,7 +409,8 @@ export function validateSubmissionFields(input: {
   krewe: string;
   categoryId: string;
   offer: string;
-  contact: string;
+  email: string;
+  phone: string;
   website: string;
 }): SubmissionErrors {
   const errors: SubmissionErrors = {};
@@ -402,8 +426,15 @@ export function validateSubmissionFields(input: {
   if (!input.offer || input.offer.length > 500) {
     errors.offer = "Say what you offer, in 500 characters or fewer.";
   }
-  if (!input.contact || input.contact.length > 120) {
-    errors.contact = "Add an email or phone number.";
+  if (!input.email) {
+    errors.email = "Add an email address.";
+  } else if (input.email.length > 120 || !isEmail(input.email)) {
+    errors.email = "Use a valid email address.";
+  }
+  if (!input.phone) {
+    errors.phone = "Add a phone number.";
+  } else if (!isPhone(input.phone)) {
+    errors.phone = "Use a phone number with at least 10 digits.";
   }
   if (input.website.length > 200) {
     errors.website = "That website address is too long.";
