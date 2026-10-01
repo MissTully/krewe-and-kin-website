@@ -119,12 +119,22 @@ function ListingCard({ listing }: { listing: DirectoryListing }) {
       className={`kk-card kk-card--${listing.status}${flyerSrc ? " kk-card--with-flyer" : ""}`}
     >
       <div className="kk-card__main">
-        <ListingMedia listing={listing} compact={Boolean(flyerSrc)} />
+        {flyerSrc ? null : <ListingMedia listing={listing} />}
         <div className="kk-card__body">
-          <div className="kk-card__top">
-            <h3>{listing.name}</h3>
-            <span className={`kk-badge kk-badge--${listing.status}`}>{listing.badge}</span>
-          </div>
+          {flyerSrc ? (
+            <div className="kk-card__identity">
+              <ListingMedia listing={listing} compact />
+              <div className="kk-card__top">
+                <h3>{listing.name}</h3>
+                <span className={`kk-badge kk-badge--${listing.status}`}>{listing.badge}</span>
+              </div>
+            </div>
+          ) : (
+            <div className="kk-card__top">
+              <h3>{listing.name}</h3>
+              <span className={`kk-badge kk-badge--${listing.status}`}>{listing.badge}</span>
+            </div>
+          )}
           <p className="kk-card__summary">{listing.summary}</p>
           <ul className="kk-meta">
             {listing.meta.map((item) => (
@@ -213,7 +223,7 @@ function ListingMedia({
         src={src}
         alt={alt}
         fill
-        sizes="(min-width: 760px) 480px, 100vw"
+        sizes={compact ? "72px" : "(min-width: 760px) 480px, 100vw"}
       />
     </div>
   );

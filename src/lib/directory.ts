@@ -66,7 +66,7 @@ export const DIRECTORY_CATEGORIES: DirectoryCategory[] = [
           "Website studio for Tampa Bay krewes only. Public site + member portal — roster, dues, RSVPs, and the season in one place.",
         status: "founding",
         badge: "Founding listing",
-        image: "/directory/krewe-and-kin.jpg",
+        image: "/directory/krewe-and-kin-logo.png",
         imageAlt: "Krewe & Kin logo",
         flyerImage: "/directory/krewe-kin-studio-flyer.jpg",
         flyerAlt:

@@ -279,8 +279,25 @@
   flex: 1;
 }
 
-.kk-card__media--logo {
-  aspect-ratio: 2.4 / 1;
+.kk-card__identity {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.kk-card__identity .kk-card__top {
+  flex: 1;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.kk-card__identity .kk-card__media--logo {
+  width: 72px;
+  height: 72px;
+  aspect-ratio: 1;
+  flex: 0 0 72px;
+  border-bottom: 0;
   background: #070d0e;
 }
 
@@ -755,10 +772,20 @@ label.kk-btn {
   border-bottom-color: var(--kk-gold);
 }
 
+@media (max-width: 859px) {
+  .kk-card__flyer a {
+    align-items: center;
+  }
+
+  .kk-card__flyer-frame {
+    width: min(100%, 300px);
+  }
+}
+
 @media (min-width: 860px) {
   .kk-card--with-flyer {
     display: grid;
-    grid-template-columns: minmax(0, 1.05fr) minmax(320px, 52%);
+    grid-template-columns: minmax(0, 1.05fr) minmax(280px, 46%);
     align-items: center;
   }
 
