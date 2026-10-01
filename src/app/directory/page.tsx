@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { DirectoryBoard } from "@/components/DirectoryBoard";
 import { SiteHeader } from "@/components/SiteHeader";
-import { LISTING_REQUEST_MAILTO } from "@/lib/directory";
+import { DIRECTORY_CATEGORIES, LISTING_REQUEST_PATH, mergeApprovedListings } from "@/lib/directory";
+import { listSubmissions, submissionToListing } from "@/lib/directory-submissions";
 import "./directory.css";
+
+export const dynamic = "force-dynamic";
 
 const title = "Krewe Business Directory — Krewe & Kin";
 const description =
@@ -22,7 +25,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default function DirectoryPage() {
+export default async function DirectoryPage() {
+  let approved: ReturnType<typeof submissionToListing>[] = [];
+  try {
+    const submissions = await listSubmissions();
+    approved = submissions
+      .filter((submission) => submission.status === "approved")
+      .map(submissionToListing);
+  } catch (error) {
+    console.error("directory listings unavailable", error);
+  }
+  const categories = mergeApprovedListings(DIRECTORY_CATEGORIES, approved);
+
   return (
     <div className="kk-page">
       <a className="kk-skip" href="#directory-main">
@@ -46,7 +60,7 @@ export default function DirectoryPage() {
           </p>
         </header>
 
-        <DirectoryBoard />
+        <DirectoryBoard categories={categories} />
 
         <section className="kk-cta" aria-labelledby="listing-request-heading">
           <div>
@@ -54,11 +68,12 @@ export default function DirectoryPage() {
               Own a business and ride with a krewe?
             </h2>
             <p>
-              Send your name, krewe, what you offer, and a contact. We’ll add you
-              once we confirm you’re krewe-owned and Tampa Bay local.
+              Send your name, krewe, what you offer, a contact, and a logo or
+              photo. We’ll add you once we confirm you’re krewe-owned and Tampa
+              Bay local.
             </p>
           </div>
-          <a className="kk-btn" href={LISTING_REQUEST_MAILTO}>
+          <a className="kk-btn" href={LISTING_REQUEST_PATH}>
             Request a listing <span aria-hidden="true">→</span>
           </a>
         </section>

@@ -1,9 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import { useSyncExternalStore } from "react";
 import {
   DIRECTORY_CATEGORIES,
   categoryNote,
+  listingImageSrc,
   type DirectoryCategory,
   type DirectoryListing,
 } from "@/lib/directory";
@@ -20,7 +22,7 @@ function subscribeToHash(onStoreChange: () => void) {
   return () => window.removeEventListener("hashchange", onStoreChange);
 }
 
-export function DirectoryBoard() {
+export function DirectoryBoard({ categories }: { categories: DirectoryCategory[] }) {
   const active = useSyncExternalStore(subscribeToHash, categoryFromHash, () => ALL);
 
   function select(id: string) {
@@ -34,7 +36,7 @@ export function DirectoryBoard() {
     });
   }
 
-  const visible = DIRECTORY_CATEGORIES.filter(
+  const visible = categories.filter(
     (category) => active === ALL || category.id === active,
   );
 
@@ -103,7 +105,7 @@ function CategorySection({ category }: { category: DirectoryCategory }) {
       </div>
       <div className="kk-grid">
         {category.listings.map((listing) => (
-          <ListingCard key={`${category.id}-${listing.name}`} listing={listing} />
+          <ListingCard key={listing.id ?? `${category.id}-${listing.name}`} listing={listing} />
         ))}
       </div>
     </section>
@@ -113,29 +115,66 @@ function CategorySection({ category }: { category: DirectoryCategory }) {
 function ListingCard({ listing }: { listing: DirectoryListing }) {
   return (
     <article className={`kk-card kk-card--${listing.status}`}>
-      <div className="kk-card__top">
-        <h3>{listing.name}</h3>
-        <span className={`kk-badge kk-badge--${listing.status}`}>{listing.badge}</span>
+      <ListingMedia listing={listing} />
+      <div className="kk-card__body">
+        <div className="kk-card__top">
+          <h3>{listing.name}</h3>
+          <span className={`kk-badge kk-badge--${listing.status}`}>{listing.badge}</span>
+        </div>
+        <p className="kk-card__summary">{listing.summary}</p>
+        <ul className="kk-meta">
+          {listing.meta.map((item) => (
+            <li key={item.label}>
+              {item.href ? (
+                <a
+                  href={item.href}
+                  {...(item.external
+                    ? { target: "_blank", rel: "noopener noreferrer" }
+                    : {})}
+                >
+                  {item.label}
+                </a>
+              ) : (
+                item.label
+              )}
+            </li>
+          ))}
+        </ul>
       </div>
-      <p className="kk-card__summary">{listing.summary}</p>
-      <ul className="kk-meta">
-        {listing.meta.map((item) => (
-          <li key={item.label}>
-            {item.href ? (
-              <a
-                href={item.href}
-                {...(item.external
-                  ? { target: "_blank", rel: "noopener noreferrer" }
-                  : {})}
-              >
-                {item.label}
-              </a>
-            ) : (
-              item.label
-            )}
-          </li>
-        ))}
-      </ul>
     </article>
+  );
+}
+
+function ListingMedia({ listing }: { listing: DirectoryListing }) {
+  const src = listingImageSrc(listing.image);
+  if (!src) {
+    return (
+      <div className="kk-card__media kk-card__media--empty" aria-hidden="true">
+        <span>No image yet</span>
+      </div>
+    );
+  }
+
+  const alt = listing.imageAlt ?? "";
+  if (!src.startsWith("/directory/")) {
+    return (
+      <div className="kk-card__media">
+        {/* Uploaded logos are https Blob URLs or the local media route. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className="kk-card__photo" src={src} alt={alt} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="kk-card__media">
+      <Image
+        className="kk-card__photo"
+        src={src}
+        alt={alt}
+        fill
+        sizes="(min-width: 760px) 480px, 100vw"
+      />
+    </div>
   );
 }
