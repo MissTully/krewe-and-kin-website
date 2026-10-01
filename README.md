@@ -3,6 +3,7 @@
 Unified **marketing site + client billing portal** for [kreweandkin.com](https://kreweandkin.com).
 
 - `/` — existing Krewe & Kin marketing page (static HTML preserved)
+- `/directory` — krewe member small-business directory
 - `/clients` — client billing portal (invoices, PDFs, PayPal, admin)
 - `/welcome` — same marketing content (legacy URL)
 
@@ -65,6 +66,7 @@ update public.profiles set role = 'admin' where email = 'missy@kreweandkin.com';
 | Path | Description |
 |---|---|
 | `public/site/index.html` | Marketing homepage (served at `/`) |
+| `src/app/directory/page.tsx` | Krewe business directory (`/directory`) |
 | `src/app/clients/*` | Portal UI (login, dashboard, invoices, admin) |
 | `src/app/api/*` | Auth, PayPal, admin APIs |
 | `supabase/migrations/001_schema.sql` | profiles, clients, invoices, payments + RLS |
