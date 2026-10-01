@@ -557,14 +557,35 @@ button.kk-btn:disabled {
   min-height: 7rem;
 }
 
-.kk-field input[type="file"] {
-  font-family: var(--body);
-  text-transform: none;
-  letter-spacing: 0;
-  font-weight: 400;
-  padding: 10px 0;
+.kk-upload {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.kk-field .kk-upload__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
   border: 0;
   background: transparent;
+  pointer-events: none;
+}
+
+label.kk-btn {
+  cursor: pointer;
+}
+
+.kk-upload__input:focus-visible + .kk-btn {
+  outline: 2px solid var(--kk-gold-deep);
+  outline-offset: 3px;
 }
 
 .kk-field small,
@@ -662,6 +683,10 @@ button.kk-btn:disabled {
   margin: 4px 0 0;
   color: var(--kk-muted);
   line-height: 1.45;
+}
+
+.kk-review__item a {
+  color: var(--kk-gold-deep);
 }
 
 .kk-review__actions {

@@ -68,9 +68,9 @@ export default async function DirectoryPage() {
               Own a business and ride with a krewe?
             </h2>
             <p>
-              Send your name, krewe, what you offer, a contact, and a logo or
-              photo. We’ll add you once we confirm you’re krewe-owned and Tampa
-              Bay local.
+              Send your name, krewe, what you offer, an email, a phone, and a
+              logo or photo. We’ll add you once we confirm you’re krewe-owned
+              and Tampa Bay local.
             </p>
           </div>
           <a className="kk-btn" href={LISTING_REQUEST_PATH}>
