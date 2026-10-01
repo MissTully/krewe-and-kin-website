@@ -28,6 +28,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+# listing uploads saved locally when BLOB_READ_WRITE_TOKEN is unset
+.data/
+
 # env files
 .env
 .env.local

@@ -61,12 +61,25 @@ update public.profiles set role = 'admin' where email = 'missy@kreweandkin.com';
 
 7. `npm run dev` (or deploy to Vercel).
 
+## Directory listing uploads
+
+Business owners request a listing at `/directory/request` and upload a card logo (JPG, PNG, or WebP, 4 MB max) plus an optional marketing flyer (JPG, PNG, WebP, or PDF, 4 MB max). Files are checked by their contents, not just the filename.
+
+- On Vercel, uploads go to the `krewe-directory` Blob store (`BLOB_READ_WRITE_TOKEN` is set when that store is connected).
+- Locally, with the token unset, uploads are saved under `.data/directory-submissions/` (gitignored).
+- New requests stay **pending**. They do not appear on `/directory` until an admin approves them at `/directory/review` (sign in at `/clients` as an admin first).
+- Approved cards show the uploaded logo. An image flyer sits beside that listing on desktop and stacks under it on a phone. A PDF flyer is linked as “View flyer”. Listings with no image keep the empty placeholder.
+- The founding Krewe & Kin card uses the site logo and the Gasparilla studio flyer at `public/directory/krewe-kin-studio-flyer.jpg` beside the listing.
+
 ## Key paths
 
 | Path | Description |
 |---|---|
 | `public/site/index.html` | Marketing homepage (served at `/`) |
 | `src/app/directory/page.tsx` | Krewe business directory (`/directory`) |
+| `src/app/directory/request/page.tsx` | Listing request form with logo/photo upload |
+| `src/app/directory/review/page.tsx` | Admin review of pending listings |
+| `public/directory/` | Seed listing logos (the founding Krewe & Kin card) |
 | `src/app/clients/*` | Portal UI (login, dashboard, invoices, admin) |
 | `src/app/api/*` | Auth, PayPal, admin APIs |
 | `supabase/migrations/001_schema.sql` | profiles, clients, invoices, payments + RLS |

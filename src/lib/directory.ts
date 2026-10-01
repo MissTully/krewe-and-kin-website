@@ -1,17 +1,6 @@
-export const LISTING_REQUEST_MAILTO = `mailto:missy@kreweandkin.com?subject=${encodeURIComponent(
-  "Krewe Business Directory — listing request",
-)}&body=${encodeURIComponent(
-  [
-    "Name:",
-    "Krewe:",
-    "What I offer:",
-    "Contact (email or phone):",
-    "Website (if you have one):",
-    "",
-  ].join("\n"),
-)}`;
+export const LISTING_REQUEST_PATH = "/directory/request";
 
-export type ListingStatus = "founding" | "open" | "sample";
+export type ListingStatus = "founding" | "open" | "sample" | "listed";
 
 export type ListingMeta = {
   label: string;
@@ -20,12 +9,37 @@ export type ListingMeta = {
 };
 
 export type DirectoryListing = {
+  id?: string;
   name: string;
   summary: string;
   status: ListingStatus;
   badge: string;
   meta: ListingMeta[];
+  /**
+   * Optional logo or photo. Repo files live in `public/directory/`
+   * (`/directory/your-file.jpg`). Approved uploads use an `https://` Blob URL
+   * or `/api/directory/media/{id}` in local dev.
+   */
+  image?: string;
+  imageAlt?: string;
+  /** Marketing flyer preview shown beside the listing when set. */
+  flyerImage?: string;
+  flyerAlt?: string;
+  /** Opens the flyer file (PDF download or the full image). */
+  flyerHref?: string;
+  flyerLabel?: string;
 };
+
+const LOCAL_MEDIA_PREFIX = "/api/directory/media/";
+
+/** Local files live in public/directory/. Remote images must be https. */
+export function listingImageSrc(image: string | undefined): string | null {
+  if (!image) return null;
+  if (image.startsWith("/directory/")) return image;
+  if (image.startsWith("https://")) return image;
+  if (image.startsWith(LOCAL_MEDIA_PREFIX) && !image.includes("..")) return image;
+  return null;
+}
 
 export type DirectoryCategory = {
   id: string;
@@ -38,7 +52,7 @@ const openSlot = (summary: string): DirectoryListing => ({
   summary,
   status: "open",
   badge: "Open",
-  meta: [{ label: "Open for submissions", href: LISTING_REQUEST_MAILTO }],
+  meta: [{ label: "Open for submissions", href: LISTING_REQUEST_PATH }],
 });
 
 export const DIRECTORY_CATEGORIES: DirectoryCategory[] = [
@@ -52,6 +66,13 @@ export const DIRECTORY_CATEGORIES: DirectoryCategory[] = [
           "Website studio for Tampa Bay krewes only. Public site + member portal — roster, dues, RSVPs, and the season in one place.",
         status: "founding",
         badge: "Founding listing",
+        image: "/directory/krewe-and-kin.jpg",
+        imageAlt: "Krewe & Kin logo",
+        flyerImage: "/directory/krewe-kin-studio-flyer.jpg",
+        flyerAlt:
+          "Krewe & Kin marketing flyer: Your krewe. One website. Website studio for Gasparilla krewes.",
+        flyerHref: "/directory/krewe-kin-studio-flyer.jpg",
+        flyerLabel: "Open flyer",
         meta: [
           {
             label: "Krewe of Shamrock",
@@ -115,7 +136,7 @@ export const DIRECTORY_CATEGORIES: DirectoryCategory[] = [
           "Balls, parades, and krewe nights — shot by people who already know the season.",
         status: "open",
         badge: "Open",
-        meta: [{ label: "Category open", href: LISTING_REQUEST_MAILTO }],
+        meta: [{ label: "Category open", href: LISTING_REQUEST_PATH }],
       },
     ],
   },
@@ -129,7 +150,7 @@ export const DIRECTORY_CATEGORIES: DirectoryCategory[] = [
           "The food vendors boards already ask about in the group chat — this slot stays open for a krewe-owned caterer.",
         status: "open",
         badge: "Open",
-        meta: [{ label: "Category open", href: LISTING_REQUEST_MAILTO }],
+        meta: [{ label: "Category open", href: LISTING_REQUEST_PATH }],
       },
     ],
   },
@@ -143,14 +164,38 @@ export const DIRECTORY_CATEGORIES: DirectoryCategory[] = [
           "The people who keep krewe nights moving. This slot is open until a real act joins.",
         status: "open",
         badge: "Open",
-        meta: [{ label: "Category open", href: LISTING_REQUEST_MAILTO }],
+        meta: [{ label: "Category open", href: LISTING_REQUEST_PATH }],
       },
     ],
   },
 ];
 
+export function isDirectoryCategoryId(id: string): boolean {
+  return DIRECTORY_CATEGORIES.some((category) => category.id === id);
+}
+
+/** Approved submissions sit with the real listings, ahead of samples and open slots. */
+export function mergeApprovedListings(
+  categories: DirectoryCategory[],
+  approved: DirectoryListing[],
+): DirectoryCategory[] {
+  return categories.map((category) => {
+    const incoming = approved.filter((listing) => listing.id?.startsWith(`${category.id}:`));
+    if (incoming.length === 0) return category;
+    const listings = [...category.listings];
+    const insertAt = listings.findIndex(
+      (listing) => listing.status === "sample" || listing.status === "open",
+    );
+    const at = insertAt === -1 ? listings.length : insertAt;
+    listings.splice(at, 0, ...incoming);
+    return { ...category, listings };
+  });
+}
+
 export function categoryNote(category: DirectoryCategory): string {
-  const real = category.listings.filter((listing) => listing.status === "founding");
+  const real = category.listings.filter(
+    (listing) => listing.status === "founding" || listing.status === "listed",
+  );
   if (real.length > 0) {
     return real.length === 1 ? "1 listing" : `${real.length} listings`;
   }
