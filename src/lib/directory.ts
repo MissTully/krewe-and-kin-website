@@ -69,7 +69,8 @@ export const DIRECTORY_CATEGORIES: DirectoryCategory[] = [
         image: "/directory/krewe-and-kin.jpg",
         imageAlt: "Krewe & Kin logo",
         flyerImage: "/directory/krewe-kin-studio-flyer.jpg",
-        flyerAlt: "Krewe & Kin marketing flyer: Your krewe. One website.",
+        flyerAlt:
+          "Krewe & Kin marketing flyer: Your krewe. One website. Website studio for Gasparilla krewes.",
         flyerHref: "/directory/krewe-kin-studio-flyer.jpg",
         flyerLabel: "Open flyer",
         meta: [
