@@ -122,19 +122,19 @@ button{ font:inherit; color:inherit; }
   transition:background .35s var(--ease), border-color .35s var(--ease), backdrop-filter .35s var(--ease);
 }
 .nav.stuck{ background:rgba(7,13,14,.9); backdrop-filter:blur(9px) saturate(120%); border-bottom-color:rgba(249,221,184,.14); }
-.nav__in{ display:flex; align-items:center; gap:clamp(16px,3vw,40px); min-height:74px; }
+.nav__in{ display:flex; align-items:center; flex-wrap:wrap; gap:clamp(16px,3vw,40px); min-height:74px; }
 .nav__mark{ flex:0 0 auto; display:flex; align-items:center; text-decoration:none; }
 .nav__mark img{ width:clamp(108px,11vw,138px); mix-blend-mode:screen; }
-.nav__links{ display:flex; gap:clamp(14px,2.4vw,30px); margin-left:auto; align-items:center; }
+.nav__links{ display:flex; flex-wrap:wrap; justify-content:flex-end; gap:clamp(10px,1.5vw,22px); margin-left:auto; align-items:center; }
 .nav__links a:not(.btn){
-  font-family:var(--util); text-transform:uppercase; letter-spacing:.16em;
-  font-size:1rem; font-weight:500; text-decoration:none; color:var(--bone-2);
+  font-family:var(--util); text-transform:uppercase; letter-spacing:.12em;
+  font-size:.98rem; font-weight:500; text-decoration:none; color:var(--bone-2);
   padding:6px 0; border-bottom:1px solid transparent; transition:color .25s, border-color .25s;
 }
 .nav__links a:not(.btn):hover{ color:var(--bone); border-bottom-color:var(--gold); }
 .nav__cta{ display:none; }
 @media (min-width:1000px){ .nav__cta{ display:inline-flex; } }
-@media (max-width:720px){ .nav__links a:not(.nav__demo){ display:none; } }
+@media (max-width:720px){ .nav__links a:not(.nav__demo):not(.nav__dir){ display:none; } }
 
 /* ============================================================
    Buttons
@@ -418,6 +418,7 @@ button{ font:inherit; color:inherit; }
       <a href="#missy">Why me</a>
       <a href="#cost">What it costs</a>
       <a href="/demo/">Demo</a>
+      <a class="nav__dir" href="/directory">Directory</a>
       <a class="nav__demo" href="/clients">Client portal</a>
       <a class="nav__demo" href="https://calendar.app.google/8SNFPVVx3ZY4Q13i6" target="_blank" rel="noopener">Talk to me</a>
     </nav>

@@ -1,0 +1,161 @@
+export const LISTING_REQUEST_MAILTO = `mailto:missy@kreweandkin.com?subject=${encodeURIComponent(
+  "Krewe Business Directory — listing request",
+)}&body=${encodeURIComponent(
+  [
+    "Name:",
+    "Krewe:",
+    "What I offer:",
+    "Contact (email or phone):",
+    "Website (if you have one):",
+    "",
+  ].join("\n"),
+)}`;
+
+export type ListingStatus = "founding" | "open" | "sample";
+
+export type ListingMeta = {
+  label: string;
+  href?: string;
+  external?: boolean;
+};
+
+export type DirectoryListing = {
+  name: string;
+  summary: string;
+  status: ListingStatus;
+  badge: string;
+  meta: ListingMeta[];
+};
+
+export type DirectoryCategory = {
+  id: string;
+  label: string;
+  listings: DirectoryListing[];
+};
+
+const openSlot = (summary: string): DirectoryListing => ({
+  name: "Your listing here",
+  summary,
+  status: "open",
+  badge: "Open",
+  meta: [{ label: "Open for submissions", href: LISTING_REQUEST_MAILTO }],
+});
+
+export const DIRECTORY_CATEGORIES: DirectoryCategory[] = [
+  {
+    id: "websites",
+    label: "Websites",
+    listings: [
+      {
+        name: "Krewe & Kin",
+        summary:
+          "Website studio for Tampa Bay krewes only. Public site + member portal — roster, dues, RSVPs, and the season in one place.",
+        status: "founding",
+        badge: "Founding listing",
+        meta: [
+          {
+            label: "Krewe of Shamrock",
+            href: "https://www.kreweofshamrock.com/",
+            external: true,
+          },
+          { label: "kreweandkin.com", href: "https://kreweandkin.com" },
+          {
+            label: "missy@kreweandkin.com",
+            href: "mailto:missy@kreweandkin.com",
+          },
+          { label: "(813) 416-1641", href: "tel:+18134161641" },
+        ],
+      },
+      openSlot(
+        "Krewe members who build or redesign sites can apply. Name, what you do, which krewe you’re in, and how boards reach you.",
+      ),
+    ],
+  },
+  {
+    id: "apps",
+    label: "Apps",
+    listings: [
+      {
+        name: "Member Hub builders",
+        summary:
+          "Private member apps for events, news, check-ins, and member passes. Example slot for krewe-owned app makers.",
+        status: "sample",
+        badge: "Sample",
+        meta: [{ label: "Sample · replace with real vendor" }],
+      },
+      openSlot(
+        "Built an app for your krewe? List it so other boards know who to call.",
+      ),
+    ],
+  },
+  {
+    id: "print",
+    label: "Print & Design",
+    listings: [
+      {
+        name: "Parade print shop",
+        summary:
+          "Leave-behinds, ball invites, banners, and merch art from a krewe member’s shop. Placeholder until a real printer joins.",
+        status: "sample",
+        badge: "Sample",
+        meta: [{ label: "Sample · replace with real vendor" }],
+      },
+      openSlot(
+        "Graphic designers and print shops owned by krewe members welcome.",
+      ),
+    ],
+  },
+  {
+    id: "photo",
+    label: "Photo & Video",
+    listings: [
+      {
+        name: "Photographers & videographers",
+        summary:
+          "Balls, parades, and krewe nights — shot by people who already know the season.",
+        status: "open",
+        badge: "Open",
+        meta: [{ label: "Category open", href: LISTING_REQUEST_MAILTO }],
+      },
+    ],
+  },
+  {
+    id: "food",
+    label: "Food & Catering",
+    listings: [
+      {
+        name: "Caterers",
+        summary:
+          "The food vendors boards already ask about in the group chat — this slot stays open for a krewe-owned caterer.",
+        status: "open",
+        badge: "Open",
+        meta: [{ label: "Category open", href: LISTING_REQUEST_MAILTO }],
+      },
+    ],
+  },
+  {
+    id: "entertainment",
+    label: "Entertainment",
+    listings: [
+      {
+        name: "DJs & bands",
+        summary:
+          "The people who keep krewe nights moving. This slot is open until a real act joins.",
+        status: "open",
+        badge: "Open",
+        meta: [{ label: "Category open", href: LISTING_REQUEST_MAILTO }],
+      },
+    ],
+  },
+];
+
+export function categoryNote(category: DirectoryCategory): string {
+  const real = category.listings.filter((listing) => listing.status === "founding");
+  if (real.length > 0) {
+    return real.length === 1 ? "1 listing" : `${real.length} listings`;
+  }
+  if (category.listings.every((listing) => listing.status === "open")) {
+    return "Category open";
+  }
+  return "Sample placeholders";
+}
