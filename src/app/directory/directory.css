@@ -564,7 +564,7 @@ button.kk-btn:disabled {
   align-items: flex-start;
 }
 
-.kk-upload__input {
+.kk-field .kk-upload__input {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -572,8 +572,11 @@ button.kk-btn:disabled {
   margin: -1px;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
   white-space: nowrap;
   border: 0;
+  background: transparent;
+  pointer-events: none;
 }
 
 label.kk-btn {
