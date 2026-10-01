@@ -223,7 +223,7 @@ function ListingMedia({
         src={src}
         alt={alt}
         fill
-        sizes={compact ? "72px" : "(min-width: 760px) 480px, 100vw"}
+        sizes={compact ? "80px" : "(min-width: 760px) 480px, 100vw"}
       />
     </div>
   );

@@ -69,7 +69,7 @@ Business owners request a listing at `/directory/request` with a required email 
 - Locally, with the token unset, uploads are saved under `.data/directory-submissions/` (gitignored).
 - New requests stay **pending**. They do not appear on `/directory` until an admin approves them at `/directory/review` (sign in at `/clients` as an admin first).
 - Approved cards show the uploaded logo. An image flyer sits beside that listing on desktop and stacks under it on a phone. A PDF flyer is linked as “View flyer”. Listings with no image keep the empty placeholder.
-- The founding Krewe & Kin card leads with the business name and the wordmark at `public/directory/krewe-and-kin-logo.png`. The Gasparilla studio flyer at `public/directory/krewe-kin-studio-flyer.jpg` sits beside the listing on a wide screen and under it, at a smaller size, on a phone.
+- The founding Krewe & Kin card leads with the business name and the header wordmark at `public/directory/krewe-and-kin-mark.jpg` (about 52px tall). The Gasparilla studio flyer at `public/directory/krewe-kin-studio-flyer.jpg` sits beside the listing on a wide screen and as a small preview under it on a phone.
 
 ## Key paths
 
